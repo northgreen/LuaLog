@@ -22,21 +22,21 @@ M.get_level_name = function(level)
     end
 end
 
----@class IcLogEvent
+---@class LuaLogEvent
 ---@field name string
 ---@field level IcUtilLogLevel
 ---@field msg string
 ---@field time integer
 ---@field traceback string
 
----@class IcLogFormaterOpt
+---@class LuaLogFormaterOpt
 ---@field show_debug_trace boolean|nil
 
----@class IcLogFormatter
----@field format fun(self: IcLogFormatter, msg:IcLogEvent, opt:IcLogFormaterOpt|nil): string
+---@class LuaLogFormatter
+---@field format fun(self: LuaLogFormatter, msg:LuaLogEvent, opt:LuaLogFormaterOpt|nil): string
 
 ---format log message with simple format
----@type IcLogFormatter
+---@type LuaLogFormatter
 M.formatters.simple_formatter = {
     format = function(_, msg, opt)
         if opt == nil then opt = {} end
@@ -53,18 +53,18 @@ M.formatters.simple_formatter = {
     end
 }
 
----@class IcLogOutputterOpt
----@field formatter IcLogFormatter
----@field formatter_opt IcLogFormaterOpt|nil
+---@class LuaLogOutputterOpt
+---@field formatter LuaLogFormatter
+---@field formatter_opt LuaLogFormaterOpt|nil
 ---@field opt table
 
 ---out putter for log message
----@class IcLogOutputter
----@field formatter IcLogFormatter|nil
----@field output fun(self: IcLogOutputter, msg:IcLogEvent,opt:IcLogOutputterOpt|nil)
+---@class LuaLogOutputter
+---@field formatter LuaLogFormatter|nil
+---@field output fun(self: LuaLogOutputter, msg:LuaLogEvent,opt:LuaLogOutputterOpt|nil)
 
 --- output log message to stdio/stderr
----@type IcLogOutputter
+---@type LuaLogOutputter
 M.out_putters.std_outputter = {
     formatter = nil,
     output = function(self, msg, opt)
@@ -91,15 +91,15 @@ M.out_putters.std_outputter = {
 
 ---describe a rote
 ---it will rote some log message to `output` with `output_opt`
----@class IcLogRoute
+---@class LuaLogRoute
 ---@field level IcUtilLogLevel the level of log message that will be rote to `output`
----@field output IcLogOutputter|string the outputter of log message. if it is a string, it will be used as the name of outputter in `outputs`
----@field output_opt IcLogOutputterOpt the option of outputter
+---@field output LuaLogOutputter|string the outputter of log message. if it is a string, it will be used as the name of outputter in `outputs`
+---@field output_opt LuaLogOutputterOpt the option of outputter
 
----@class IcLogRotater
----@field rotes table<string,IcLogRoute>
----@field outputs table<string,IcLogOutputter>
----@field output fun(self: IcLogRotater, msg:IcLogEvent)
+---@class LuaLogRotater
+---@field rotes table<string,LuaLogRoute>
+---@field outputs table<string,LuaLogOutputter>
+---@field output fun(self: LuaLogRotater, msg:LuaLogEvent)
 local roatter = {outputs = {root = M.out_putters.std_outputter}, rotes = {}}
 
 function roatter:output(msg)
@@ -119,22 +119,22 @@ function roatter:output(msg)
     end
 end
 
----@class IcLogger
+---@class LuaLogger
 ---@field level IcUtilLogLevel unused field
 ---@field name string the name of logger
----@field parentLogger IcLogger|nil the parent logger,it is unused now
----@field debug fun(self: IcLogger, msg: any)|nil
----@field info fun(self: IcLogger, msg: any)|nil
----@field warn fun(self: IcLogger,msg: any)|nil
----@field error fun(self: IcLogger,msg: any)|nil
----@field fatal fun(self: IcLogger,msg: any)|nil
+---@field parentLogger LuaLogger|nil the parent logger,it is unused now
+---@field debug fun(self: LuaLogger, msg: any)|nil
+---@field info fun(self: LuaLogger, msg: any)|nil
+---@field warn fun(self: LuaLogger,msg: any)|nil
+---@field error fun(self: LuaLogger,msg: any)|nil
+---@field fatal fun(self: LuaLogger,msg: any)|nil
 
----@param self IcLogger
+---@param self LuaLogger
 ---@param msg string
 ---@param level IcUtilLogLevel
 local function _log(self, msg, level)
     local msg_str = tostring(msg)
-    ---@type IcLogEvent
+    ---@type LuaLogEvent
     local logevent = {
         name = self.name,
         traceback = debug.traceback('', 2),
@@ -146,7 +146,7 @@ local function _log(self, msg, level)
 end
 
 ---Root Logger
----@type IcLogger
+---@type LuaLogger
 local RootLogger = {
     name = 'ROOT',
     level = 0,
@@ -165,7 +165,7 @@ local logger_mt = {__index = RootLogger}
 
 ---get logger by name
 ---@param name string
----@return IcLogger
+---@return LuaLogger
 function M.getLogger(name)
     if name == nil then
         return setmetatable({parentLogger = RootLogger}, logger_mt)
@@ -175,10 +175,10 @@ function M.getLogger(name)
 end
 
 ---opt for log module
----@class IcLogOpt
+---@class LuaLogOpt
 ---@field log_level string|nil 
----@field rotes table<string,IcLogRoute>|nil the routes of log,will rote log message to different outputter. you can also use `root` to set default outputter.
----@field outputs table<string,IcLogOutputter>|nil define outputter by name.it will be used in `rotes`
+---@field rotes table<string,LuaLogRoute>|nil the routes of log,will rote log message to different outputter. you can also use `root` to set default outputter.
+---@field outputs table<string,LuaLogOutputter>|nil define outputter by name.it will be used in `rotes`
 ---@field show_debug_trace boolean|nil
 M.opt = {
     log_level = "INFO",
@@ -238,7 +238,7 @@ local function deep_extend(...)
 end
 
 ---Init log module with config.
----@param cfg IcLogOpt|nil
+---@param cfg LuaLogOpt|nil
 function M.setup(cfg)
     M.opt = deep_extend(M.opt, cfg or {})
 

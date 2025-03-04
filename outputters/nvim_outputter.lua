@@ -1,6 +1,6 @@
 local log = nil -- mabye it will be used later
 
----@type IcLogOutputter
+---@type LuaLogOutputter
 local nvim_notify_outputter = {
     name = "vim",
     formatter = nil,
