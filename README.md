@@ -2,10 +2,10 @@
 
 A simple logging library for Lua.Supports rotes,multiple outputters and formatters.Both easy to use and powerful.
 
-[*] Rotes
-[*] Multiple outputters
-[*] Formatters
-[*] Easy to use
+- [x] Rotes
+- [x] Multiple outputters
+- [x] Formatters
+- [x] Easy to use
 
 ## Prerequisites
 
